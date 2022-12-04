@@ -1,8 +1,25 @@
+import { FormEvent, useContext, useRef } from "react";
 import styled from "styled-components";
+import { UsernameContext } from "../../../App";
 
 export default function SignUpForm() {
+  const { changeUsername } = useContext(UsernameContext);
+
+  const userRef = useRef<null | HTMLInputElement>(null);
+  const responseRef = useRef<null | HTMLDivElement>(null);
+
+  function handleSubmit(e: FormEvent) {
+    e.preventDefault();
+
+    if (responseRef.current) responseRef.current.style.display = "flex";
+
+    setTimeout(() => {
+      if (userRef.current) changeUsername(userRef.current.value);
+    }, 3000);
+  }
+
   return (
-    <StyledForm id="subscribe-form">
+    <StyledForm id="subscribe-form" onSubmit={handleSubmit}>
       <div className="input-label-pair">
         <label htmlFor="name">Name</label>
         <input
@@ -44,6 +61,7 @@ export default function SignUpForm() {
           type="text"
           placeholder="type your username"
           required
+          ref={userRef}
         />
       </div>
 
@@ -60,6 +78,9 @@ export default function SignUpForm() {
         />
       </div>
       <button type="submit">Subscribe</button>
+      <div id="response" ref={responseRef}>
+        <h2>Loading...</h2>
+      </div>
     </StyledForm>
   );
 }
@@ -127,6 +148,21 @@ const StyledForm = styled.form`
 
   & button:active {
     background-color: hsl(141, 43%, 28%);
+  }
+
+  & #response {
+    position: absolute;
+    top: 0px;
+    right: 0px;
+
+    background-color: #fff;
+
+    display: none;
+    align-items: center;
+    justify-content: center;
+
+    width: 100%;
+    height: 100%;
   }
 
   @media (max-width: 600px) {
